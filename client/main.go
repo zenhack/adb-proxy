@@ -67,6 +67,6 @@ func main() {
 	dec := common.NewDecoder(stdout, common.ServerStart)
 	enc := common.NewEncoder(stdin, common.ClientStart)
 
-	go common.LoudCopy(enc, conn)
-	common.LoudCopy(conn, dec)
+	go io.Copy(enc, conn)
+	io.Copy(conn, dec)
 }

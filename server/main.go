@@ -4,7 +4,7 @@ import (
 	"net"
 	"flag"
 	"os"
-//	"io"
+	"io"
 
 	"github.com/zenhack/adb-proxy/common"
 )
@@ -47,6 +47,6 @@ func main() {
 	dec := common.NewDecoder(os.Stdin, common.ClientStart)
 	enc := common.NewEncoder(os.Stdout, common.ServerStart)
 
-	go common.LoudCopy(conn, dec)
-	common.LoudCopy(enc, conn)
+	go io.Copy(conn, dec)
+	io.Copy(enc, conn)
 }
