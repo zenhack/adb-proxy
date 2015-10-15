@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"time"
 )
 
 var (
@@ -40,6 +41,23 @@ func handleConnection(conn net.Conn) {
 	cmd.Wait()
 }
 
+func autoRestart(job func() error) {
+	for {
+		job()
+	}
+}
+
+
+func slirpvde() error {
+	slirpvde := exec.Command(*bindir + "/slirpvde", "-dhcp", "-N", *dns, *socket)
+	err := slirpvde.Start()
+	if err != nil {
+		time.Sleep(1 * time.Second)
+		return err
+	}
+	return slirpvde.Wait()
+}
+
 func termWait(cmd *exec.Cmd) {
 	cmd.Process.Signal(os.Interrupt)
 	cmd.Wait()
@@ -58,13 +76,7 @@ func main() {
 		return
 	}
 	defer termWait(vde_switch)
-	slirpvde := exec.Command(*bindir + "/slirpvde", "-dhcp", "-N", *dns, *socket)
-	err = slirpvde.Start()
-	if err != nil {
-		fmt.Println("Error starting slirpvde: ", err)
-		return
-	}
-	defer termWait(vde_switch)
+	go autoRestart(slirpvde)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
