@@ -13,6 +13,8 @@ import (
 var (
 	bindir = flag.String("bindir", "/data/local/tmp/vde/bin", "Directory containing vde executables")
 	socket = flag.String("socket", "/data/local/tmp/vde/socket", "Socket directory for the vde switch.")
+	// Defaults to OpenDNS. Note that in the suggested setup, the phone's local DNS isn't
+	// usable, since we're linking VDE against musl and there's no /etc/resolv.conf:
 	dns = flag.String("dns", "208.67.222.222", "DNS server to offer from dhcp.")
 	addr = flag.String("addr", ":8282", "Address on which to listen for vde_plug connections.")
 )
